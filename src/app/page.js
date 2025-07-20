@@ -1,5 +1,5 @@
-import ArVideo from "@/components/Home";
-import Image from "next/image";
+import ArVideo from "@/components/Arvideo";
+
 
 export default function Home() {
   return (

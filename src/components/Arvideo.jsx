@@ -108,6 +108,7 @@ export default function ArVideo() {
 
                         playsInline
                         style={{ display: 'none' }}
+                        className='h-screen'
                     >
                         <source src="/video/arvideo.mp4" type="video/mp4" />
                     </video>

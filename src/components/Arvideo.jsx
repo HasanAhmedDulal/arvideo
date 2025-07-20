@@ -5,7 +5,7 @@ export default function ArVideo() {
     const cameraRef = useRef(null);
     const canvasRef = useRef(null);
     const videoRef = useRef(null);
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
 
     // Start the back camera
     useEffect(() => {

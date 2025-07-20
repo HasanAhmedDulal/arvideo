@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ArVideo() {
     const cameraRef = useRef(null);
@@ -7,31 +7,35 @@ export default function ArVideo() {
     const videoRef = useRef(null);
     const [started, setStarted] = useState(false);
 
+    // Start the back camera
     useEffect(() => {
         if (!started) return;
 
-        navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { ideal: 'environment' } },
-            audio: false,
-        })
+        navigator.mediaDevices
+            .getUserMedia({
+                video: { facingMode: { ideal: 'environment' } },
+                audio: false,
+            })
             .then((stream) => {
                 if (cameraRef.current) {
                     cameraRef.current.srcObject = stream;
                 }
             })
             .catch((err) => {
-                console.error("Camera access error:", err);
+                console.error('Camera access error:', err);
             });
     }, [started]);
 
+    // Draw the green screen video to canvas and chroma key it
     useEffect(() => {
         if (!started) return;
 
-        const drawChromaKey = () => {
-            const canvas = canvasRef.current;
-            const ctx = canvas?.getContext('2d');
-            const video = videoRef.current;
-            if (!canvas || !ctx || !video) return;
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext('2d');
+        const video = videoRef.current;
+
+        const draw = () => {
+            if (!video || !ctx || !canvas) return;
 
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -46,17 +50,27 @@ export default function ArVideo() {
                 const g = data[i + 1];
                 const b = data[i + 2];
 
-                // ✅ Remove green background (tune these values if needed)
-                if (g > 150 && r < 120 && b < 120) {
-                    data[i + 3] = 0;
+                // Remove green background
+                if (g > 150 && r < 130 && b < 130) {
+                    data[i + 3] = 0; // set alpha to 0
                 }
             }
 
             ctx.putImageData(frame, 0, 0);
-            requestAnimationFrame(drawChromaKey);
+            requestAnimationFrame(draw);
         };
 
-        requestAnimationFrame(drawChromaKey);
+        // Wait for video to be ready before drawing
+        const handleCanPlay = () => {
+            video.play(); // ensure autoplay works
+            draw(); // start canvas drawing loop
+        };
+
+        video.addEventListener('canplay', handleCanPlay);
+
+        return () => {
+            video.removeEventListener('canplay', handleCanPlay);
+        };
     }, [started]);
 
     return (
@@ -80,7 +94,7 @@ export default function ArVideo() {
                 </div>
             )}
 
-            {/* Canvas for green-screen-removed video */}
+            {/* Canvas displaying chroma-keyed video */}
             {started && (
                 <>
                     <canvas
@@ -89,13 +103,14 @@ export default function ArVideo() {
                     />
                     <video
                         ref={videoRef}
-                        src="/video/213925.mp4"
                         autoPlay
                         loop
                         muted
                         playsInline
                         style={{ display: 'none' }}
-                    />
+                    >
+                        <source src="/video/213925.mp4" type="video/mp4" />
+                    </video>
                 </>
             )}
         </div>

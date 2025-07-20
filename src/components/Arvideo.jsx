@@ -51,7 +51,7 @@ export default function ArVideo() {
                 const b = data[i + 2];
 
                 // Remove green background
-                if (g > 150 && r < 130 && b < 130) {
+                if (g > 150 && r < 100 && b < 100) {
                     data[i + 3] = 0; // set alpha to 0
                 }
             }

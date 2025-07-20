@@ -109,7 +109,7 @@ export default function ArVideo() {
                         playsInline
                         style={{ display: 'none' }}
                     >
-                        <source src="/video/213925.mp4" type="video/mp4" />
+                        <source src="/video/arvideo.mp4" type="video/mp4" />
                     </video>
                 </>
             )}

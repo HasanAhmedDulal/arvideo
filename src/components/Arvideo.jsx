@@ -105,7 +105,7 @@ export default function ArVideo() {
                         ref={videoRef}
                         autoPlay
                         loop
-
+                        muted
                         playsInline
                         style={{ display: 'none' }}
                         className='h-screen'

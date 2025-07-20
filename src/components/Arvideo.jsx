@@ -1,61 +1,118 @@
-'use client'
-import { useRef, useEffect, useState } from 'react';
+'use client';
+import { useEffect, useRef, useState } from 'react';
 
-export default function ArVideo() {
-    const cameraRef = useRef(null);
-    const [started, setStarted] = useState(false);
+export default function Hologram() {
+    const camRef = useRef(null);
+    const canvasRef = useRef(null);
+    const greenVideoRef = useRef(null);
+    const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
-        if (!started) return;
+        const startCamera = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { exact: 'environment' } },
+                    audio: false,
+                });
+                if (camRef.current) camRef.current.srcObject = stream;
+                setIsReady(true);
+            } catch (err) {
+                console.error('Camera error:', err);
+            }
+        };
 
-        navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { ideal: 'environment' } },
-            audio: false,
-        })
-            .then((stream) => {
-                if (cameraRef.current) {
-                    cameraRef.current.srcObject = stream;
+        startCamera();
+    }, []);
+
+    useEffect(() => {
+        if (!isReady) return;
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const greenVideo = greenVideoRef.current;
+
+        const draw = () => {
+            if (!canvas || !ctx || !greenVideo) return;
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(greenVideo, 0, 0, canvas.width, canvas.height);
+
+            const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = frame.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                // Chroma key: remove green
+                if (g > 150 && r < 120 && b < 120) {
+                    data[i + 3] = 0;
                 }
-            })
-            .catch((err) => {
-                console.error("Camera access error:", err);
-            });
-    }, [started]);
+            }
+
+            ctx.putImageData(frame, 0, 0);
+            requestAnimationFrame(draw);
+        };
+
+        draw();
+    }, [isReady]);
 
     return (
-        <div className="relative w-screen h-screen overflow-hidden bg-black">
-            {/* Live Camera Feed */}
+        <div style={styles.container}>
+            {/* Camera background */}
             <video
-                ref={cameraRef}
+                ref={camRef}
                 autoPlay
                 muted
                 playsInline
-                className="absolute top-0 left-0 w-full h-full object-cover z-0"
+                style={styles.camera}
             />
 
-            {/* Tap to Start Overlay */}
-            {!started && (
-                <div
-                    onClick={() => setStarted(true)}
-                    className="absolute z-20 w-full h-full bg-black bg-opacity-80 flex items-center justify-center text-white text-3xl"
-                >
-                    Tap to Start
-                </div>
-            )}
+            {/* Canvas that draws the green screen video with transparency */}
+            <canvas ref={canvasRef} style={styles.canvas} />
 
-            {/* Transparent WebM Overlay Video */}
-            {started && (
-                <video
-                    autoPlay
-                    muted
-                    playsInline
-                    controls
-                    className="absolute z-30 top-1/4 left-1/4 w-1/2 pointer-events-auto"
-                >
-                    <source src="/video/213925.mp4" type="video/webm" />
-                    Your browser does not support video.
-                </video>
-            )}
+            {/* Green screen video (hidden, drawn on canvas) */}
+            <video
+                ref={greenVideoRef}
+                src="/213925.mp4" // make sure this is placed in /public
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ display: 'none' }}
+            />
         </div>
     );
 }
+
+const styles = {
+    container: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        backgroundColor: '#000',
+    },
+    camera: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        zIndex: 1,
+    },
+    canvas: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 2,
+        pointerEvents: 'none',
+    },
+};

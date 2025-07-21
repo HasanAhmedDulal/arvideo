@@ -197,22 +197,22 @@ export default function ChromaKeyJSX() {
 
     return (
         <div
-            style={{
-                backgroundImage: 'url(https://i.imgur.com/VWEpMQ1.jpeg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'right',
-                backgroundRepeat: 'no-repeat',
-            }}
+        // style={{
+        //     backgroundImage: 'url(https://i.imgur.com/VWEpMQ1.jpeg)',
+        //     backgroundSize: 'cover',
+        //     backgroundPosition: 'right',
+        //     backgroundRepeat: 'no-repeat',
+        // }}
         >
-            <video
+            {/* <video
                 ref={videoRef}
                 loop
                 controls
                 crossOrigin="anonymous"
                 src={'/video/mobilephoe.mp4'}
                 style={{ width: '100%', display: 'inline' }}
-            />
-            <canvas ref={canvasRef} style={{ width: '100%' }} />
+            /> */}
+            {/* <canvas ref={canvasRef} style={{ width: '100%' }} /> */}
 
             <div>
                 {/* Live Camera Feed */}

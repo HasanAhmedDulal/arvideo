@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-// import DefaultVideo from './video/mobilephoe.mp4';
+import { useEffect, useRef } from 'react';
+// import DefaultVideo from './mobilephoe.mp4';
 
 const fragmentShaderRaw = `
 precision mediump float;
@@ -36,9 +36,6 @@ void main(void) {
   gl_FragColor = ProcessChromaKey(texCoord);
 }
 `;
-
-
-
 
 function hexColorToRGBPct(hex) {
     const result = hex.match(/^#([0-9a-f]{6})$/i)?.[1];
@@ -127,28 +124,7 @@ function startProcessing(video, canvas, wgl, getConfig) {
 export default function ChromaKeyJSX() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const cameraRef = useRef(null);
     const wglRef = useRef(null);
-    const [started, setStarted] = useState(true);
-
-    // Start the back camera
-    useEffect(() => {
-        if (!started) return;
-
-        navigator.mediaDevices
-            .getUserMedia({
-                video: { facingMode: { ideal: 'environment' } },
-                audio: false,
-            })
-            .then((stream) => {
-                if (cameraRef.current) {
-                    cameraRef.current.srcObject = stream;
-                }
-            })
-            .catch((err) => {
-                console.error('Camera access error:', err);
-            });
-    }, [started]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -190,56 +166,21 @@ export default function ChromaKeyJSX() {
         };
     }, []);
 
-
-
-
-
-
     return (
-        <div
-        // style={{
-        //     backgroundImage: 'url(https://i.imgur.com/VWEpMQ1.jpeg)',
-        //     backgroundSize: 'cover',
-        //     backgroundPosition: 'right',
-        //     backgroundRepeat: 'no-repeat',
-        // }}
-        >
-            {/* <video
+        <div>
+            <video
                 ref={videoRef}
                 loop
                 controls
+                autoPlay
                 crossOrigin="anonymous"
                 src={'/video/mobilephoe.mp4'}
-                style={{ width: '100%', display: 'inline' }}
-            /> */}
-            {/* <canvas ref={canvasRef} style={{ width: '100%' }} /> */}
-
+                style={{ width: '100%', display: 'none' }}
+            />
             <div>
-                {/* Live Camera Feed */}
-                <video
-                    ref={cameraRef}
-                    autoPlay
-                    muted
-                    playsInline
-                    className="absolute top-0 left-0 w-full h-full object-cover z-0"
-                />
 
-                <>
-                    <canvas
-                        ref={canvasRef}
-                        className="absolute top-0 left-0 w-full h-full z-30 pointer-events-none"
-                    />
-                    {/* <video
-                        ref={videoRef}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        style={{ display: 'none' }}
-                    >
-                        <source src="/video/mobilephoe.mp4" type="video/mp4" />
-                    </video> */}
-                </>
+                <canvas ref={canvasRef} style={{ width: '100%' }} />
+
             </div>
         </div>
     );

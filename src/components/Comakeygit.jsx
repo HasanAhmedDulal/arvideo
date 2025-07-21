@@ -175,7 +175,7 @@ export default function ChromaKeyJSX() {
                 autoPlay
                 crossOrigin="anonymous"
                 src={'/video/mobilephoe.mp4'}
-                style={{ width: '100%', display: 'none' }}
+                style={{ width: '100%', display: 'inline' }}
             />
             <div>
 

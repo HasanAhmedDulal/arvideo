@@ -215,6 +215,15 @@ export default function ChromaKeyJSX() {
             <canvas ref={canvasRef} style={{ width: '100%' }} />
 
             <div>
+                {/* Live Camera Feed */}
+                <video
+                    ref={cameraRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    className="absolute top-0 left-0 w-full h-full object-cover z-0"
+                />
+
                 <>
                     <canvas
                         ref={canvasRef}

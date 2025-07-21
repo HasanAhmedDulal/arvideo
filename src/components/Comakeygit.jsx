@@ -220,7 +220,7 @@ export default function ChromaKeyJSX() {
                         ref={canvasRef}
                         className="absolute top-0 left-0 w-full h-full z-30 pointer-events-none"
                     />
-                    <video
+                    {/* <video
                         ref={videoRef}
                         autoPlay
                         loop
@@ -229,7 +229,7 @@ export default function ChromaKeyJSX() {
                         style={{ display: 'none' }}
                     >
                         <source src="/video/mobilephoe.mp4" type="video/mp4" />
-                    </video>
+                    </video> */}
                 </>
             </div>
         </div>

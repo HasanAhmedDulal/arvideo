@@ -88,7 +88,7 @@ export default function ArVideo() {
             {!started && (
                 <div
                     onClick={() => setStarted(true)}
-                    className="absolute z-20  h-full bg-black bg-opacity-80 flex items-center justify-center text-white text-3xl"
+                    className="absolute z-20 w-full h-full bg-black bg-opacity-80 flex items-center justify-center text-white text-3xl"
                 >
                     Tap to Start
                 </div>
@@ -99,7 +99,7 @@ export default function ArVideo() {
                 <>
                     <canvas
                         ref={canvasRef}
-                        className="absolute top-0 left-0  h-full z-30 pointer-events-none"
+                        className="absolute top-0 left-0 w-full h-full z-30 pointer-events-none"
                     />
                     <video
                         ref={videoRef}
@@ -108,9 +108,8 @@ export default function ArVideo() {
                         muted
                         playsInline
                         style={{ display: 'none' }}
-                        className='h-screen'
                     >
-                        <source src="/video/arvideo.mp4" type="video/mp4" />
+                        <source src="/video/mobilephoe.mp4" type="video/mp4" />
                     </video>
                 </>
             )}

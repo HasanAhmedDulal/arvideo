@@ -248,7 +248,8 @@ export default function ProdReadyChromaDemo() {
             />
             <button
                 onClick={unmuteAndPlay}
-                className="btn btn-primary"
+                className="absolute bottom-4 left-1/2 btn btn-primary"
+
             >
                 Enable Sound
             </button>

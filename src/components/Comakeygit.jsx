@@ -238,7 +238,7 @@ export default function ProdReadyChromaDemo() {
             {/* input video */}
             <video
                 ref={videoRef}
-                src={'video/arvideo.mp4'}
+                src={'video/213925.mp4'}
                 crossOrigin="anonymous"
                 loop
                 muted

@@ -214,7 +214,7 @@ export default function ProdReadyChromaDemo() {
     }, []);
     return (
         <>
-            <div className="fixed inset-0 z-0 flex items-center justify-center bg-black">
+            <div className="fixed inset-0 z-0 flex items-center justify-center ">
                 {/* live streaming */}
                 <video
                     ref={cameraRef}

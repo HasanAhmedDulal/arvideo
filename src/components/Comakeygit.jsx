@@ -1,4 +1,5 @@
 'use client'
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 // import DefaultVideo from "video/mobilephoe.mp4";
 
@@ -246,10 +247,11 @@ export default function ProdReadyChromaDemo() {
                 playsInline
                 style={{ display: "none" }}
             />
+            <Link href={'https://tymortech.com/leads/'} target="_blank" className="absolute bottom-30 sm:bottom-30 left-5  btn bg-[#ff4500] border-none"> Contact us</Link>
+
             <button
                 onClick={unmuteAndPlay}
-                className="absolute bottom-6 sm:bottom-4 left-1/2  btn btn-[#FF4500]"
-
+                className="absolute bottom-6 sm:bottom-4 right-1/2 btn bg-[#ff4500] border-none"
             >
                 Enable Sound
             </button>

@@ -213,23 +213,28 @@ export default function ProdReadyChromaDemo() {
             });
     }, []);
     return (
+        <>
+            <div className="fixed inset-0 z-0 flex items-center justify-center bg-black">
+                {/* live streaming */}
+                <video
+                    ref={cameraRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    className="absolute top-0 left-0 w-full h-full object-cover z-0"
+                />
 
-        <div className="fixed inset-0 z-0 flex items-center justify-center bg-black">
-            {/* live streaming */}
-            <video
-                ref={cameraRef}
-                autoPlay
-                muted
-                playsInline
-                className="absolute top-0 left-0 w-full h-full object-cover z-0"
-            />
+                {/* remove greenscreen video */}
+                <canvas
+                    className="absolute top-0 left-0 z-30 w-full h-full object-cover"
+                    ref={canvasRef}
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                />
 
-            {/* remove greenscreen video */}
-            <canvas
-                className="absolute top-0 left-0 z-30 w-full h-full object-cover"
-                ref={canvasRef}
-                style={{ width: "100%", height: "auto", display: "block" }}
-            />
+            </div>
+
+
+
             {/* input video */}
             <video
                 ref={videoRef}
@@ -247,11 +252,7 @@ export default function ProdReadyChromaDemo() {
             >
                 Enable Sound
             </button>
-        </div>
-
-
-
-
+        </>
 
     );
 }

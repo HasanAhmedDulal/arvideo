@@ -214,7 +214,7 @@ export default function ProdReadyChromaDemo() {
     }, []);
     return (
         <>
-            <div className="fixed inset-0 z-0 flex items-center justify-center ">
+            <div className="fixed inset-0 z-0 flex items-center justify-center bg-transparent">
                 {/* live streaming */}
                 <video
                     ref={cameraRef}
@@ -226,7 +226,7 @@ export default function ProdReadyChromaDemo() {
 
                 {/* remove greenscreen video */}
                 <canvas
-                    className="absolute top-0 left-0 z-30 w-full h-full object-cover"
+                    className="absolute top-0 left-0 z-30 w-full h-full "
                     ref={canvasRef}
                     style={{ width: "100%", height: "auto", display: "block" }}
                 />

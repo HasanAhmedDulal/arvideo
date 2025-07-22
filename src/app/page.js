@@ -1,12 +1,13 @@
-import ArVideo from "@/components/Arvideo";
-import ChromaKeyJSX from "@/components/Comakeygit";
+
+import ProdReadyChromaDemo from "@/components/Comakeygit";
+
 
 
 export default function Home() {
   return (
     <>
-      <ChromaKeyJSX></ChromaKeyJSX>
-      <ArVideo></ArVideo>
+      <ProdReadyChromaDemo></ProdReadyChromaDemo>
+
     </>
   );
 }

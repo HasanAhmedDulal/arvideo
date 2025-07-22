@@ -84,15 +84,7 @@ export default function ArVideo() {
                 className="absolute top-0 left-0 w-full h-full object-cover z-0"
             />
 
-            {/* Tap to Start */}
-            {!started && (
-                <div
-                    onClick={() => setStarted(true)}
-                    className="absolute z-20 w-full h-full bg-black bg-opacity-80 flex items-center justify-center text-white text-3xl"
-                >
-                    Tap to Start
-                </div>
-            )}
+
 
             {/* Canvas displaying chroma-keyed video */}
             {started && (

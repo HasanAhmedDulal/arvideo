@@ -1,12 +1,14 @@
-'use client';
-import { useEffect, useRef } from 'react';
-// import DefaultVideo from './mobilephoe.mp4';
+'use client'
+import { useEffect, useRef } from "react";
+// import DefaultVideo from "video/mobilephoe.mp4";
 
 const fragmentShaderRaw = `
 precision mediump float;
+
 uniform sampler2D tex;
 uniform float texWidth;
 uniform float texHeight;
+
 uniform vec3 keyColor;
 uniform float similarity;
 uniform float smoothness;
@@ -37,23 +39,18 @@ void main(void) {
 }
 `;
 
-function hexColorToRGBPct(hex) {
-    const result = hex.match(/^#([0-9a-f]{6})$/i)?.[1];
-    return [
-        parseInt(result?.substring(0, 2) || '0', 16) / 255,
-        parseInt(result?.substring(2, 4) || '0', 16) / 255,
-        parseInt(result?.substring(4, 6) || '0', 16) / 255,
-    ];
-}
-
 function init(gl) {
     const vs = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs, 'attribute vec2 c; void main(void) { gl_Position=vec4(c, 0.0, 1.0); }');
+    gl.shaderSource(vs, "attribute vec2 c; void main(void) { gl_Position=vec4(c, 0.0, 1.0); }");
     gl.compileShader(vs);
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fs, fragmentShaderRaw);
     gl.compileShader(fs);
+
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(fs));
+    }
 
     const prog = gl.createProgram();
     gl.attachShader(prog, vs);
@@ -65,7 +62,7 @@ function init(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, vb);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]), gl.STATIC_DRAW);
 
-    const coordLoc = gl.getAttribLocation(prog, 'c');
+    const coordLoc = gl.getAttribLocation(prog, "c");
     gl.vertexAttribPointer(coordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordLoc);
 
@@ -75,20 +72,33 @@ function init(gl) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
     return prog;
+}
+
+function hexColorToRGBPct(hex) {
+    const match = hex.match(/^#([0-9a-f]{6})$/i);
+    if (!match) return [0, 0, 0];
+    const hexNum = match[1];
+    return [
+        parseInt(hexNum.substr(0, 2), 16) / 255,
+        parseInt(hexNum.substr(2, 2), 16) / 255,
+        parseInt(hexNum.substr(4, 2), 16) / 255,
+    ];
 }
 
 function startProcessing(video, canvas, wgl, getConfig) {
     const { gl, prog } = wgl;
-    const texLoc = gl.getUniformLocation(prog, 'tex');
-    const texWidthLoc = gl.getUniformLocation(prog, 'texWidth');
-    const texHeightLoc = gl.getUniformLocation(prog, 'texHeight');
-    const keyColorLoc = gl.getUniformLocation(prog, 'keyColor');
-    const similarityLoc = gl.getUniformLocation(prog, 'similarity');
-    const smoothnessLoc = gl.getUniformLocation(prog, 'smoothness');
-    const spillLoc = gl.getUniformLocation(prog, 'spill');
 
-    function processFrame() {
+    const texLoc = gl.getUniformLocation(prog, "tex");
+    const texWidthLoc = gl.getUniformLocation(prog, "texWidth");
+    const texHeightLoc = gl.getUniformLocation(prog, "texHeight");
+    const keyColorLoc = gl.getUniformLocation(prog, "keyColor");
+    const similarityLoc = gl.getUniformLocation(prog, "similarity");
+    const smoothnessLoc = gl.getUniformLocation(prog, "smoothness");
+    const spillLoc = gl.getUniformLocation(prog, "spill");
+
+    function render() {
         if (wgl.stopped) return;
 
         if (video.videoWidth !== canvas.width) {
@@ -103,54 +113,66 @@ function startProcessing(video, canvas, wgl, getConfig) {
         gl.uniform1f(texHeightLoc, video.videoHeight);
 
         const config = getConfig();
-        gl.uniform3f(keyColorLoc, ...config.keycolor);
+        gl.uniform3f(keyColorLoc, config.keycolor[0], config.keycolor[1], config.keycolor[2]);
         gl.uniform1f(similarityLoc, config.similarity);
         gl.uniform1f(smoothnessLoc, config.smoothness);
         gl.uniform1f(spillLoc, config.spill);
+
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
-        if (!wgl.stopped) {
-            if (wgl.useRequestVideoFrameCallback && 'requestVideoFrameCallback' in video) {
-                video.requestVideoFrameCallback(processFrame);
-            } else {
-                requestAnimationFrame(processFrame);
-            }
+        if (wgl.stopped) return;
+
+        if (wgl.useRequestVideoFrameCallback && wgl.requestVideoFrameCallbackIsAvailable) {
+            video.requestVideoFrameCallback(render);
+        } else {
+            setTimeout(() => requestAnimationFrame(render), 1000 / 24);
         }
     }
 
-    processFrame();
+    render();
 }
 
-export default function ChromaKeyJSX() {
+export default function ProdReadyChromaDemo() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const wglRef = useRef(null);
 
     useEffect(() => {
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        if (!video || !canvas) return;
+        if (!canvasRef.current || !videoRef.current) return;
 
-        const gl = canvas.getContext('webgl', { premultipliedAlpha: false });
+        const gl = canvasRef.current.getContext("webgl", {
+            premultipliedAlpha: false,
+        });
+        if (!gl) throw new Error("WebGL init failed");
+
         const prog = init(gl);
+        const video = videoRef.current;
+
+        // Force video play (autoplay with mute works)
+        video.play().catch((err) => {
+            console.warn("Autoplay failed", err);
+        });
 
         const wgl = {
             gl,
             prog,
             stopped: false,
             useRequestVideoFrameCallback: true,
-            requestVideoFrameCallbackIsAvailable: 'requestVideoFrameCallback' in video,
+            requestVideoFrameCallbackIsAvailable: "requestVideoFrameCallback" in video,
             start: () => {
                 const getConfig = () => {
-                    const config = {
-                        keycolor: '#11ff05',
+                    const defaults = {
+                        keycolor: "#11ff05",
                         similarity: 0.4,
                         smoothness: 0.08,
                         spill: 0.1,
                     };
-                    return { ...config, keycolor: hexColorToRGBPct(config.keycolor) };
+                    return {
+                        ...defaults,
+                        keycolor: hexColorToRGBPct(defaults.keycolor),
+                    };
                 };
-                startProcessing(video, canvas, wgl, getConfig);
+                startProcessing(video, canvasRef.current, wgl, getConfig);
             },
             stop: () => {
                 wgl.stopped = true;
@@ -166,22 +188,57 @@ export default function ChromaKeyJSX() {
         };
     }, []);
 
+    const unmuteAndPlay = () => {
+        const video = videoRef.current;
+        if (video) {
+            video.muted = false;
+            video.play();
+        }
+    };
+    const cameraRef = useRef(null);
+    // Start the back camera
+    useEffect(() => {
+        navigator.mediaDevices
+            .getUserMedia({
+                video: { facingMode: { ideal: 'environment' } },
+                audio: false,
+            })
+            .then((stream) => {
+                if (cameraRef.current) {
+                    cameraRef.current.srcObject = stream;
+                }
+            })
+            .catch((err) => {
+                console.error('Camera access error:', err);
+            });
+    }, []);
     return (
-        <div>
+        <div className="">
+            {/* live streaming */}
+            <video
+                ref={cameraRef}
+                autoPlay
+                muted
+                playsInline
+                className="absolute top-0 left-0 w-full h-full object-cover z-0"
+            />
+            {/* input video */}
             <video
                 ref={videoRef}
-                loop
-                controls
-                autoPlay
+                src={'video/mobilephoe.mp4'}
                 crossOrigin="anonymous"
-                src={'/video/mobilephoe.mp4'}
-                style={{ width: '100%', display: 'inline' }}
+                loop
+                muted
+                autoPlay
+                playsInline
+                style={{ display: "none" }}
             />
-            <div>
-
-                <canvas ref={canvasRef} style={{ width: '100%' }} />
-
-            </div>
+            {/* remove greenscreen video */}
+            <canvas
+                ref={canvasRef}
+                style={{ width: "100%", height: "auto", display: "block" }}
+            />
+            <button onClick={() => unmuteAndPlay} >Enable Sound</button>
         </div>
     );
 }

@@ -213,8 +213,8 @@ export default function ProdReadyChromaDemo() {
             });
     }, []);
     return (
-        <div className="">
-            <div className="relative h-dvh overflow-hidden ">
+        <>
+            <div className="fixed inset-0 z-0 flex items-center justify-center bg-black">
                 {/* live streaming */}
                 <video
                     ref={cameraRef}
@@ -226,7 +226,7 @@ export default function ProdReadyChromaDemo() {
 
                 {/* remove greenscreen video */}
                 <canvas
-                    className="absolute top-0 left-0 z-30 w-full h-full object-cover "
+                    className="absolute top-0 left-0 z-30 w-full h-full object-cover"
                     ref={canvasRef}
                     style={{ width: "100%", height: "auto", display: "block" }}
                 />
@@ -246,8 +246,13 @@ export default function ProdReadyChromaDemo() {
                 playsInline
                 style={{ display: "none" }}
             />
-            <button onClick={() => unmuteAndPlay} >Enable Sound</button>
-        </div>
+            <button
+                onClick={unmuteAndPlay}
+                className="btn btn-primary"
+            >
+                Enable Sound
+            </button>
+        </>
 
     );
 }

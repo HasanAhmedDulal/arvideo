@@ -213,7 +213,7 @@ export default function ProdReadyChromaDemo() {
             });
     }, []);
     return (
-        <div className="">
+        <div className="relative w-screen h-screen overflow-hidden bg-black">
             {/* live streaming */}
             <video
                 ref={cameraRef}
@@ -235,6 +235,7 @@ export default function ProdReadyChromaDemo() {
             />
             {/* remove greenscreen video */}
             <canvas
+                className="absolute top-0 left-0 w-full h-full z-30 pointer-events-none"
                 ref={canvasRef}
                 style={{ width: "100%", height: "auto", display: "block" }}
             />

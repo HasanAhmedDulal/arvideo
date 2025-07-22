@@ -248,13 +248,15 @@ export default function ProdReadyChromaDemo() {
                 style={{ display: "none" }}
             />
             <Link href={'https://tymortech.com/leads/'} target="_blank" className="absolute bottom-30 sm:bottom-30 left-5  btn bg-[#ff4500] border-none"> Contact us</Link>
+            <div className="fixed bottom-4 left-0 w-full flex justify-center">
+                <button
+                    onClick={unmuteAndPlay}
+                    className=" fixed bottom-4  btn bg-[#ff4500] border-none"
+                >
+                    Enable Sound
+                </button>
+            </div>
 
-            <button
-                onClick={unmuteAndPlay}
-                className="absolute bottom-6 sm:bottom-4 right-1/2 btn bg-[#ff4500] border-none"
-            >
-                Enable Sound
-            </button>
         </>
 
     );

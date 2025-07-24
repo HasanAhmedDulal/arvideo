@@ -1,13 +1,12 @@
-
-import ProdReadyChromaDemo from "@/components/Comakeygit";
-
+import ArVideo from '@/components/ArVideo'
 
 
-export default function Home() {
+export default function page() {
   return (
     <>
-      <ProdReadyChromaDemo></ProdReadyChromaDemo>
-
+      <ArVideo></ArVideo>
     </>
-  );
+
+
+  )
 }

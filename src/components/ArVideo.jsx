@@ -133,7 +133,7 @@ function startProcessing(video, canvas, wgl, getConfig) {
     render();
 }
 
-export default function ProdReadyChromaDemo() {
+export default function ArVideo() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const wglRef = useRef(null);
@@ -213,6 +213,8 @@ export default function ProdReadyChromaDemo() {
                 console.error('Camera access error:', err);
             });
     }, []);
+
+
     return (
         <>
             <div className="fixed inset-0 z-0 flex items-center justify-center bg-black">
